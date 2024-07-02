@@ -1,0 +1,29 @@
+{
+  "name": "shop-system",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "2.0.10",
+    "ant-design-vue": "^4.2.3",
+    "axios": "^1.7.2",
+    "echarts": "5.4.2",
+    "element-plus": "^2.7.6",
+    "pinia": "^2.1.7",
+    "pinia-plugin-persist": "^1.0.0",
+    "sass": "^1.77.6",
+    "vue": "^3.2.41",
+    "vue-router": "^4.4.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^3.2.0",
+    "unplugin-auto-import": "^0.17.6",
+    "unplugin-vue-components": "^0.27.2",
+    "vite": "^3.2.3"
+  }
+}

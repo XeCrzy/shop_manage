@@ -1,3 +1,3 @@
 <template> 
- Category 
+ Category 1234
 </template>

@@ -37,7 +37,7 @@ const onLogout = async () => {
 <!-- <a-menu v-model:selectedKeys="current" mode="horizontal" :items="items" /> -->
  <!-- <div></div>  -->
  <el-menu class="el-menu-demo" mode="horizontal" :ellipsis="false"> 
- <div class="navbar">“微商城”后台管理系统</div> 
+ <div class="navbar"><h2>“微商城”后台管理系统</h2></div> 
  <el-sub-menu class="menu" index="1"> 
  <template #title> 
  <el-avatar class="avatar" :src="admin.avatar"> {{ admin.username}} </el-avatar> 
@@ -58,7 +58,7 @@ const onLogout = async () => {
 } 
 .navbar { 
 //  color: white; 
- font-size: 20px; 
+ font-size: 24px; 
 } 
 .menu { 
  margin-left: auto; 

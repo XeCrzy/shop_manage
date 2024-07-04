@@ -18,6 +18,7 @@
     "pinia": "^2.1.7",
     "pinia-plugin-persist": "^1.0.0",
     "sass": "^1.77.6",
+    "tinymce": "6.6.2",
     "vue": "^3.2.41",
     "vue-router": "^4.4.0"
   },

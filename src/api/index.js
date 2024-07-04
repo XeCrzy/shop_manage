@@ -49,4 +49,8 @@ export function addGoods(data) {
 export function editGoods(data) { 
  return request.post('/admin/goods/save', data) 
 } 
+// 删除商品接口 
+export function delGoods(data) { 
+ return request.post('/admin/goods/del', data) 
+} 
 

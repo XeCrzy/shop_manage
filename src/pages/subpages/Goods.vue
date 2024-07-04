@@ -1,6 +1,6 @@
 <script setup> 
 import { ref, onMounted } from 'vue' 
-import { getGoodsList } from '../../api' 
+import { getGoodsList, delGoods } from '../../api' 
  import GoodsEdit from '../../components/GoodsEdit.vue' 
 import { ElMessageBox } from 'element-plus'
 const goodsList = ref([]) 
@@ -52,6 +52,15 @@ const editRow = row => {
  
 // 删除商品 
 const delRow = row => { 
+  ElMessageBox.confirm('确定要删除此商品吗？', { 
+ closeOnClickModal: false, 
+ confirmButtonText: '确定', 
+ cancelButtonText: '取消', 
+ }).then(async () => { 
+ if (await delGoods({ id: row.id })) { 
+ loadGoodsList() 
+ } 
+ }).catch(() => {})
 } 
  
 // 换页 
@@ -73,7 +82,10 @@ const handleBeforeClose = () => {
  confirmButtonText: '确定', 
  cancelButtonText: '取消', 
  }).then(() => { 
- dialogVisible.value = false 
+ dialogVisible.value = false
+ setTimeout(() => { 
+  goodsForm.value.resetForm() 
+ }, 500)
  }).catch(() => {})
  }
 </script>

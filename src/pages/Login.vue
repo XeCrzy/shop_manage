@@ -77,10 +77,12 @@ const rules = reactive({
 <template> 
 <div class="login_content">
   <div class="login_bgcolor">
-    <div class="login_title" style="margin-bottom: 30px">
-    <h1>“微商城”后台管理系统</h1>
-  </div>
-  <div class="login_form">
+    <div class="login_container">
+    <div class="login_title" style="margin-bottom: 100px">
+      <div class="login_title">
+            <h1>“微商城”后台管理系统</h1>
+      </div>
+        <div class="login_form">
     <a-form :model="form"
     ref="ruleFormRef"
     :rules="rules"
@@ -88,25 +90,29 @@ const rules = reactive({
     @validate="handleValidate"
     @finishFailed="handleFinishFailed"
     >
-      <a-form-item ref="username" label="用户名" name="username" >
-        <a-input  v-model:value="form.username" placeholder="Please enter your username" />
+      <a-form-item ref="username" label="用户名" name="username" style="line-height: 60px;" >
+        <a-input style="height: 60px; font-size: 30px;" v-model:value="form.username" placeholder="请输入你的用户名" />
       </a-form-item>
       
     <a-form-item
       label="密码"
       name="password"
-      
+      style="line-height: 80x; height:90px; font-size: 24px;"
     >
-      <a-input-password v-model:value="form.password" />
+      <a-input-password style="height: 50px;" v-model:value="form.password" />
     </a-form-item>
 
-    <a-form-item style="margin-top: 30px; text-align: center ; width: 100%" >
-      <a-button type="primary" html-type="submit" @click="submitForm(ruleFormRef)">登录</a-button>
+    <a-form-item style="margin-top: 50px; text-align: center ; width: 100%" >
+      <a-button style="width: 100px;height: 50px;" type="primary" html-type="submit" @click="submitForm(ruleFormRef)">登录</a-button>
       <a-button type="link" @click="resetForm">重置</a-button>
     </a-form-item>
     </a-form>
 
   </div>
+  </div>
+
+    </div>
+
   </div>
   
   
@@ -117,7 +123,7 @@ const rules = reactive({
 <style scoped>
 .login_content {
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   align-items: center;
   justify-content: center;
   width: 100%;
@@ -129,13 +135,36 @@ const rules = reactive({
 .login_bgcolor{
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  /* align-items: center; */
+  /* justify-content: center; */
+  flex-wrap: wrap;
   width: 100%;
-  width:50%;
-  height:60%;
+  width:40%;
+  height:50%;
   background-color: #fff;
+  border-radius: 20px;
 }
+.login_container{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  /* flex-direction: column; */
+  /* align-items: center; */
+  justify-content: center;
+}
+.login_title{
 
+width: 100%;
+height: 200px;
+text-align: center;
+line-height: 200px;
+
+}
+.login_form{
+  width: 80%;
+  height: 50px;
+  text-align: center;
+  margin: 0 auto;
+}
 </style>
 

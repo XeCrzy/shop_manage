@@ -10,7 +10,7 @@
       <a-layout style="padding: 0 24px 24px">
  
         <a-layout-content
-          :style="{ background: ' #e9eef3', color: '#333', padding: '24px', margin: 0, minHeight: '100vh' }"
+          :style="{ background: ' #e9eef3', color: '#333', padding: '24px', margin: 0, minHeight: '92vh' }"
         >
           <router-view></router-view>
         </a-layout-content>

@@ -18,7 +18,7 @@ const active = ref(menuIndex[router.currentRoute.value.name] || '0')
 
  <!-- 首页 --> 
  <router-link :to="{ name: 'index' }"> 
- <el-menu-item index="1"> 
+ <el-menu-item  index="1"> 
  <el-icon> 
  <HomeFilled /> 
  </el-icon> 
@@ -60,6 +60,7 @@ const active = ref(menuIndex[router.currentRoute.value.name] || '0')
 <style lang="scss" scoped> 
 .el-menu { 
  border: 0 !important; 
+//  height: 100vh; 
  .is-active { 
  background: linear-gradient(90deg, #1493fa, #01c6fa) !important 
  } 

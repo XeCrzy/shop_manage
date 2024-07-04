@@ -33,3 +33,7 @@ export function getCategoryList() {
 export function getCategory(params) { 
  return request.get('/admin/category', { params }) 
 } 
+// 商品列表接口 
+export function getGoodsList(params) { 
+ return request.get('/admin/goods/list', { params }) 
+} 

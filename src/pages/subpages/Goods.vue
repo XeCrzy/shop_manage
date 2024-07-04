@@ -9,6 +9,7 @@ const pagesize = ref(10)
 const total = ref(0) 
  const id = ref() 
 const dialogVisible = ref(false) 
+const goodsForm = ref() 
 
 onMounted(() => { 
  loadGoodsList() 
@@ -32,6 +33,9 @@ const removeTages = str => {
 } 
 // 新增商品 
 const addRow = () => {
+  if (goodsForm.value) { 
+ goodsForm.value.resetForm(0) 
+ }
   id.value = 0 
  dialogVisible.value = true 
  
@@ -39,6 +43,9 @@ const addRow = () => {
  
 // 修改商品 
 const editRow = row => { 
+   if (goodsForm.value) { 
+ goodsForm.value.resetForm(row.id) 
+ } 
   id.value = row.id 
  dialogVisible.value = true
 } 
@@ -76,7 +83,7 @@ const handleBeforeClose = () => {
  <el-button type="primary" style="margin-bottom: 10px;" @click="addRow">新增商品</el-button> 
  <!-- 新增商品的弹出框 --> 
 <el-dialog v-model="dialogVisible" :title="id ? '修改商品' : '新增商品'" :before-close="handleBeforeClose"> 
- <GoodsEdit :id="id" @success="editSuccess" /> 
+ <GoodsEdit ref="goodsForm" :id="id" @success="editSuccess" /> 
 </el-dialog>
  <!-- 商品列表 --> 
  <el-table :data="goodsList" style="width: 100%; margin-bottom: 20px" row-key="id" border default-expand-all> 

@@ -6,7 +6,12 @@
  </el-form-item> 
  <!-- 商品分类 --> 
  <el-form-item label="分类名称" prop="category_id"> 
- </el-form-item> 
+ <el-select v-model="form.category_id" placeholder="请选择二级分类名称" > 
+ <el-option-group v-for="category in categoryList" :key="category.id" :label="category.name"> 
+ <el-option v-for="item in category.children" :key="item.id" :label="item.name" :value="item.id" /> 
+ </el-option-group> 
+ </el-select> 
+</el-form-item>
  <!-- 商品价格 --> 
  <el-form-item label="商品价格" prop="price" style="width: 92%"> 
  <el-input v-model="form.price" placeholder="请填写商品价格" /> 
@@ -40,7 +45,8 @@
 
  
 <script setup> 
-import { reactive, ref} from 'vue' 
+import { reactive, ref, onMounted} from 'vue' 
+import { getCategoryList } from '../api' 
 const props = defineProps({ 
  id: { 
  type: Number 
@@ -60,7 +66,41 @@ const form = reactive({
  description: '' 
 }) 
 const formRef = ref() 
+ const categoryList = ref([]) 
  
+onMounted(() => { 
+ loadGoods() 
+}) 
+ 
+const resetForm = id => { 
+ form.id = id 
+ btnCancel() 
+} 
+defineExpose({ resetForm }) 
+ 
+ 
+const loadGoods = async () => { 
+ const data = await getCategoryList()
+ categoryList.value = convertToTree(data) 
+} 
+ 
+const convertToTree = data => { 
+ const treeData = [] 
+ const map = {} 
+ for (const item of data) { 
+ map[item.id] = { ...item, children: [] } 
+ } 
+ for (const item of data) { 
+ const node = map[item.id] 
+ if (item.pid === 0) { 
+ treeData.push(node) 
+ } else { 
+ const parent = map[item.pid] 
+ parent.children.push(node) 
+ } 
+ } 
+ return treeData 
+}
 // 新增操作 
 const addSubmit = () => { 
 } 
@@ -72,5 +112,7 @@ const editSubmit = () => {
 // 重置表单 
 const btnCancel = () => { 
  formRef.value.resetFields() 
+
+ loadGoods()
 }
 </script>

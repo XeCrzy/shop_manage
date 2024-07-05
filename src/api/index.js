@@ -28,3 +28,43 @@ export function uploadPictureURL() {
 export function getCategoryList() { 
  return request.get('/admin/category/list') 
 } 
+// 查询单个分类接口 
+export function getCategory(params) { 
+ return request.get('/admin/category', { params }) 
+} 
+
+// 新增分类接口 
+export function addCategory(data) { 
+ return request.post('/admin/category/add', data) 
+} 
+ 
+// 修改分类接口 
+export function editCategory(data) { 
+ return request.post('/admin/category/save', data) 
+} 
+
+// 删除分类接口 
+export function delCategory(data) { 
+ return request.post('/admin/category/del', data) 
+}
+
+// 商品列表接口 
+export function getGoodsList(params) { 
+ return request.get('/admin/goods/list', { params }) 
+} 
+// 查询单个商品接口 
+export function getGoods(params) { 
+ return request.get('/admin/goods', { params }) 
+}
+// 新增商品接口 
+export function addGoods(data) { 
+ return request.post('/admin/goods/add', data) 
+} 
+// 修改商品接口 
+export function editGoods(data) { 
+ return request.post('/admin/goods/save', data) 
+} 
+// 删除商品接口 
+export function delGoods(data) { 
+ return request.post('/admin/goods/del', data) 
+}

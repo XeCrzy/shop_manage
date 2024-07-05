@@ -5,12 +5,10 @@ import { changeAdminPassword, changeAdminAvatar,uploadPictureURL } from '../../a
 import notification from '../../utils/notification'
 import useToken from '../../stores/token' 
 import useAdmin from '../../stores/admin' 
-
+import router from '../../router'
 const { admin, updateAdmin, removeAdmin } = useAdmin() 
 const { token, removeToken } = useToken() 
-
-const uploadURL = uploadPictureURL() 
-const uploadData = { type: 'admin_avatar' }
+const headers = { jwt: token }
 const form = reactive({ 
  password: '', 
  password2: '' 
@@ -20,29 +18,45 @@ const avatarURL = ref(admin.avatar || defaultAvatarURL)
 const ruleFormRef = ref() 
 const uploadRef = ref()
 
+const uploadURL = uploadPictureURL()
+const uploadData = { type: 'admin_avatar' }
+
 // 修改密码 
- const submitForm = formAnt =>{
-formAnt.validateFields() // 手动的表单验证事件
- .then(async valid => { // 异步函数 
- if (valid) { 
- await changeAdminPassword({ password: form.password })
- resetForm() 
- // 退出登录 
- removeToken() 
- removeAdmin() 
- router.push({ name: 'login' }) 
-message({
-  type:'warning',
-  data:'密码修改成功！请重新登录'
- })
- } else { 
- message({
-  type:'error',
-  data:'表单错误！'
- }) 
- } 
- }) 
- } 
+const submitForm = async () => {
+  try {
+    // 使用Promise形式进行表单验证
+    const valid = await ruleFormRef.value.validate();
+
+    if (valid) {
+      // 表单验证通过后的操作
+      await changeAdminPassword({ password: form.password });
+
+      resetForm();
+      removeToken();
+      removeAdmin();
+      router.push({ name: 'login' });
+
+      notification({
+        message: '修改密码后，请重新登录',
+        type: 'warning'
+      });
+    } else {
+      notification({
+          message: '表单填写有误，请检查输入',
+          type: 'error'
+        });
+      // 表单验证未通过，这里通常不需要额外处理，因为错误信息会在表单项下自动展示
+      // 但可以根据需要添加额外的通知或逻辑
+    }
+  } catch (error) {
+    // 捕获并处理任何可能出现的异常
+    console.error("Error during form submission:", error);
+    notification({
+      message: '提交过程中发生错误，请重试',
+      type: 'error'
+    });
+  }
+}
 
 
 
@@ -50,48 +64,57 @@ const resetForm = () => {
  ruleFormRef.value.resetFields(); 
 } 
  
-const submitUpload = async () => {
-   try {
-    // 调用上传文件的 API
-    const response = await uploadRef.value.submit();
-    // 处理上传成功的响应
-    uploadSuccess(response);
-  } catch (error) {
-    // 处理上传失败的错误
+const submitUpload = () => {
+  if (!file.value) {
     notification({
-      message: '上传失败',
-      type: 'error'
-    });
+      message: '请先选择一个文件',
+      type: 'warning'
+    })
+    return
   }
 
+  const formData = new FormData()
+  formData.append('file', file.value)
+  formData.append('type', uploadData.type)
+
+  fetch(uploadURL, {
+    method: 'POST',
+    headers,
+    body: formData,
+  })
+    .then(response => response.json())
+    .then(response => {
+      uploadSuccess(response)
+    })
 }
+
 
 // 上传成功 
 const uploadSuccess = async response => {
-   const { errno, errmsg, data } = response 
- if (errno !== 0) { 
- notification({ 
- message: errmsg, 
- type: 'error' 
- }) 
- } else { 
- if (errmsg !== '') { 
- notification({ 
- message: errmsg, 
- type: 'success' 
- }) 
- } 
- await changeAdminAvatar({ 
- avatar: data.savepath 
- }) 
- updateAdmin({ 
- avatar: data.url 
- }) 
- avatarURL.value = data.url 
- } 
- uploadRef.value.clearFiles()
- 
-} 
+  const { errno, errmsg, data } = response
+  if (errno !== 0) {
+    notification({
+      message: errmsg,
+      type: 'error'
+    })
+  } else {
+    if (errmsg !== '') {
+      notification({
+        message: errmsg,
+        type: 'success'
+      })
+    }
+    await changeAdminAvatar({
+      avatar: data.savepath
+    })
+    updateAdmin({
+      avatar: data.url
+    })
+    avatarURL.value = data.url
+  }
+  file.value = null
+  fileName.value = ''
+}
  
 const validatePass = (rule, value, callback) => { 
  if (value !== form.password) { 
@@ -113,63 +136,47 @@ const rules = reactive({
 })
 
 import { message } from 'ant-design-vue';
-import { UploadOutlined } from '@ant-design/icons-vue';
+const fileInput = ref()
+const fileName = ref('')
+const file = ref(null)
 
-function getBase64(img, callback) {
-  const reader = new FileReader();
-  reader.addEventListener('load', () => callback(reader.result));
-  reader.readAsDataURL(img);
+
+const triggerUpload = () => {
+  fileInput.value.click()
 }
-const fileList = ref([]);
-const loading = ref(false);
-const imageUrl = ref('');
-const handleChange = info => {
-   if (info.file.status === 'done') {
-    if (info.file.response.errno === 0) {
-     form.picture = info.file.response.data.savepath
-    } else {
-     notification({
-      message: info.file.response.errmsg,
-      type: 'error'
-     })
-    }
-   }
+const handleFileChange = (event) => {
+  const selectedFile = event.target.files[0]
+  if (selectedFile) {
+    fileName.value = selectedFile.name
+    file.value = selectedFile
+  }
 }
-
-
 
 </script>
 
 <template> 
 <div class="setting_content">
   <div class="touxiang_message">
-    <div class="box_card">
-      <h2 style="text-align: center; height: 40px; line-height: 40px;">头像信息</h2>
-      <hr>
-      <div class="touxiang_content">
-  <div class="avatar">
-  <a-space>
-    <a-avatar shape="square" :size="50" :src="avatarURL">
-    </a-avatar>
-  </a-space>
+     <a-card class="box-card">
+        <template #title>
+          <div class="card-header" style="text-align: center;"><h2>头像信息</h2></div>
+          
+        </template>
+        
+        <div class="text item">
+          <div class="avatar">
+            <a-avatar shape="square" :size="100" :src="avatarURL" />
+          </div>
+          <div class="button-group">
+            <a-button type="primary" @click="triggerUpload">选择头像</a-button>
+            <input type="file" ref="fileInput" style="display: none;" @change="handleFileChange" />
+            <a-button type="success" @click="submitUpload">上传头像</a-button>
+            <div v-if="fileName" class="file-name">{{ fileName }}</div>
+          </div> 
+        </div>
+      </a-card>
   </div>
-  <a-upload 
-      v-model:file-list="fileList"
-      ref="uploadRef" 
-       :action="uploadURL"
-       :headers="headers" 
-        :data="uploadData"
-        :multiple="false"
-        :on-success="uploadSuccess"
-
-        >
-       <a-button title="图片文件大小不超过500KB"><upload-outlined></upload-outlined>选择图片</a-button>
-      </a-upload>
-      <a-button type="success" @click="submitUpload">上传头像</a-button>
-
-      </div>
-    </div>
-  </div>
+ 
 <div class="geren_message">
     <div class="person_header">
     <h2 style="height: 40px; line-height: 40px; text-align: center;">个人信息</h2>
@@ -184,14 +191,14 @@ const handleChange = info => {
     @finishFailed="handleFinishFailed"
     >
   <a-form-item
-      label="密码"
+      label="修改密码"
       name="password"
       
     >
       <a-input-password v-model:value="form.password" />
     </a-form-item>
       <a-form-item
-      label="密码"
+      label="请在此输入密码"
       name="password2"
       
     >
@@ -250,5 +257,29 @@ const handleChange = info => {
 .ant-upload-select-picture-card .ant-upload-text {
   margin-top: 8px;
   color: #666;
+}
+.avatar {
+  text-align: center;
+}
+.upload-demo {
+  text-align: center;
+}
+.box-card {
+  height: 316px;
+}
+.change-password-box {
+  padding-top: 38px;
+}
+.file-name {
+  margin-top: 10px;
+  color: #888;
+  text-align: center;
+}
+.button-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
 }
 </style>

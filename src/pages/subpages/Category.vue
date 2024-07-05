@@ -1,58 +1,11 @@
-<template> 
-
-  <div>
-    <el-button type="primary" style="margin-bottom: 10px" @click="addRow">新增分类</el-button> 
-    <!-- 新增分类的弹出框 -->
-     <el-dialog v-model="dialogVisible" :title="id ? '修改分类' : '新增分类'" :before-close="handleBeforeClose">
-      <CategoryEdit ref="categoryForm" :id="id" @success="editSuccess" />
-     </el-dialog>
-    <a-table
-      ref="tableRef"
-      :data-source="tableData"
-      :columns="columns"
-      :rowKey="record => record.id"
-      :bordered="true"
-      :expandable="{ defaultExpandAllRows: true }"
-      style="margin-bottom: 20px"
-    >
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'name'">
-          {{ record.name }}
-        </template>
-        <template v-if="column.key === 'level'">
-          <span v-if="record.pid == 0">一级分类</span>
-          <span v-else>二级分类</span>
-        </template>
-        <template v-if="column.key === 'id'">
-          {{ record.id }}
-        </template>
-        <template v-if="column.key === 'picture'">
-          <a-image
-            v-if="record.picture != ''"
-            :src="record.picture"
-            :preview="false"
-            style="display: flex; align-items: center; height: 60px"
-          />
-        </template>
-        <template v-if="column.key === 'action'">
-          <a-button type="warning" @click="editRow(record)">编辑</a-button>
-          <a-button type="danger" @click="delRow(record)">删除</a-button>
-
-        </template>
-      </template>
-    </a-table>
-  </div>
-</template>
-
 <script setup>
 import { ref, onMounted } from 'vue' 
-import { getCategoryList } from '../../api'
+import { getCategoryList , delCategory} from '../../api'
 import CategoryEdit from '../../components/CategoryEdit.vue'
+import { message, Modal } from 'ant-design-vue'
 const tableRef = ref(null);
 
-
-// 你的数据
-    
+// 数据  
     const tableData = ref([]);
     const dialogVisible = ref(false) 
     const id = ref(0) 
@@ -120,7 +73,17 @@ const handleBeforeClose = () => {
 } 
 
 // 删除分类 
-const delRow = row => {
+const delRow = record => {
+  if (record.pid == 0 && record.children.length != 0) {
+    message.warning('该分类下存在二级分类，请先删除二级分类再删除此分类')
+  } else {
+       const res = async () => {
+        if (await delCategory({ id: record.id })) {
+          loadCategoryList()
+        }
+      }
+      res()
+  }
 }
 
 const editSuccess = () => { 
@@ -128,3 +91,50 @@ const editSuccess = () => {
  dialogVisible.value = false 
 } 
 </script>
+
+<template> 
+  <div>
+    <el-button type="primary" style="margin-bottom: 10px" @click="addRow">新增分类</el-button> 
+    <!-- 新增分类的弹出框 -->
+     <el-dialog v-model="dialogVisible" :title="id ? '修改分类' : '新增分类'" :before-close="handleBeforeClose">
+      <CategoryEdit ref="categoryForm" :id="id" @success="editSuccess" />
+     </el-dialog>
+    <a-table
+      ref="tableRef"
+      :data-source="tableData"
+      :columns="columns"
+      :rowKey="record => record.id"
+      :bordered="true"
+      :expandable="{ defaultExpandAllRows: true }"
+      style="margin-bottom: 20px"
+    >
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'name'">
+          {{ record.name }}
+        </template>
+        <template v-if="column.key === 'level'">
+          <span v-if="record.pid == 0">一级分类</span>
+          <span v-else>二级分类</span>
+        </template>
+        <template v-if="column.key === 'id'">
+          {{ record.id }}
+        </template>
+        <template v-if="column.key === 'picture'">
+          <a-image
+            v-if="record.picture != ''"
+            :src="record.picture"
+            :preview="false"
+            style="display: flex; align-items: center; height: 60px"
+          />
+        </template>
+        <template v-if="column.key === 'action'">
+          <a-button type="warning" @click="editRow(record)">编辑</a-button>
+          <a-button type="danger" @click="delRow(record)">删除</a-button>
+
+        </template>
+      </template>
+    </a-table>
+  </div>
+</template>
+
+

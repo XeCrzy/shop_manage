@@ -146,8 +146,7 @@ const loginInfo = reactive({
  <!-- 商品数量 --> 
  <el-col :span="8"> 
  <div class="card-container"> 
- <div class="card-left-container" style="background-color: #EEA
-D0E;"> 
+ <div class="card-left-container" style="background-color: #EEAD0E;"> 
  <el-icon :size="90"> 
  <Memo /> 
  </el-icon> 
@@ -161,8 +160,7 @@ D0E;">
  <!-- 商品分类数量 --> 
  <el-col :span="8"> 
  <div class="card-container"> 
- <div class="card-left-container" style="background-color: #AB8
-2FF;"> 
+ <div class="card-left-container" style="background-color: #AB82FF;"> 
  <el-icon :size="90"> 
  <Memo /> 
  </el-icon> 
@@ -176,8 +174,7 @@ D0E;">
  <!-- 用户访问次数 --> 
  <el-col :span="8"> 
  <div class="card-container"> 
- <div class="card-left-container" style=" background-color: #63
-B8FF;"> 
+ <div class="card-left-container" style=" background-color: #63B8FF;"> 
  <el-icon :size="90"> 
  <Memo /> 
  </el-icon> 

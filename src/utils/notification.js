@@ -1,8 +1,8 @@
-import { ElNotification } from 'element-plus' 
+import { notification } from 'ant-design-vue' 
  
 var notificationInstance = null 
  
-export default (options) => { 
- notificationInstance && notificationInstance.close() 
- notificationInstance = ElNotification(options) 
-} 
+export default (options) => {
+  notificationInstance && notificationInstance.destroy();
+  notificationInstance = notification.open(options);
+}

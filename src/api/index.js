@@ -23,3 +23,8 @@ export function changeAdminAvatar(data) {
 export function uploadPictureURL() { 
  return config.baseURL + '/admin/upload/picture' 
 } 
+
+// 分类列表接口 
+export function getCategoryList() { 
+ return request.get('/admin/category/list') 
+} 
